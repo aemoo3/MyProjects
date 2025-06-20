@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import time
-from nba_api.stats.endpoints import playergamelog
+from nba_api.stats.endpoints import playergamelog 
 from nba_api.stats.static import players
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
