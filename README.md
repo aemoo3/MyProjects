@@ -1,2 +1,2 @@
 # MyProjects
-Personal Projects
+Personal Coding Projects
