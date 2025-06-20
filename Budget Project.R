@@ -58,20 +58,7 @@ for (i in seq_along(secuIDs)) {
     rename("processDate" = "Process.Dates",
            "description" = "Description",
            "moneyIn" = "Credit.Amount",
-           "moneyOut" = "Debit.Amount")
-  ######################################################################################
-  ### THE FOLLOWING SECTION IS TO DETERMINE WHO WAS RESPONSIBLE FOR THE TRANSACTION ####
-  ### "MC_" in the file name distinguishes if the transaction was from Mikey or Kati ###
-  
-  # Check if the file name contains "MC_"
-  if (grepl("MC_", secuName)) {
-    # Add "owner" column with "Michael Casella" values
-    secuExample$account <- "Michael Casella"
-  } else {
-    # Add "owner" column with "Kati Smith" values
-    secuExample$account <- "Kati Smith"
-  }
-  
+           "moneyOut" = "Debit.Amount")  
   ######################################################################################
   # Remove row names from the data frame
   rownames(secuExample) <- NULL
@@ -120,20 +107,7 @@ for (i in seq_along(appleIDs)) {
     rename("processDate" = "Clearing.Date",
            "description" = "Description",
            "moneyOut" = "Amount..USD.") %>%
-    mutate(moneyIn = NA)
-  ######################################################################################
-  ### THE FOLLOWING SECTION IS TO DETERMINE WHO WAS RESPONSIBLE FOR THE TRANSACTION ####
-  ### "MC_" in the file name distinguishes if the transaction was from Mikey or Kati ###
-  
-  # Check if the file name contains "MC_"
-  if (grepl("MC_", appleName)) {
-    # Add "owner" column with "Michael Casella" values
-    appleExample$account <- "Michael Casella"
-  } else {
-    # Add "owner" column with "Kati Smith" values
-    appleExample$account <- "Kati Smith"
-  }
-  
+    mutate(moneyIn = NA)  
   ######################################################################################
   # Remove row names from the data frame
   rownames(appleExample) <- NULL
@@ -180,19 +154,6 @@ for (i in seq_along(venmoIDs)) {
   venmoExample <- venmoExample[-1, -1]
   # Remove rows where ID is empty (blank)
   venmoExample <- venmoExample[venmoExample$ID != "", ]
-  ######################################################################################
-  ### THE FOLLOWING SECTION IS TO DETERMINE WHO WAS RESPONSIBLE FOR THE TRANSACTION ####
-  ### "MC_" in the file name distinguishes if the transaction was from Mikey or Kati ###
-  
-  # Check if the file name contains "MC_"
-  if (grepl("MC_", venmoName)) {
-    # Add "owner" column with "Michael Casella" values
-    venmoExample$account <- "Michael Casella"
-  } else {
-    # Add "owner" column with "Kati Smith" values
-    venmoExample$account <- "Kati Smith"
-  }
-  
   ######################################################################################
   # Store the data frame in the list with the file name as the key
   venmoDF[[i]] <- venmoExample
@@ -361,15 +322,10 @@ transactions <- transactions %>%
 transactions <- transactions %>%
   mutate(
     moneyFrom = case_when(
-      # Examples of Mikey & Kati ACH Paychecks
-      str_detect(description,"ACH Deposit DUKE UNIVERSITY") & !is.na(moneyIn) ~ "Duke University",
-      str_detect(description,"STOCKTON GRAHAM  Payroll") & !is.na(moneyIn) ~ "Dilworth Coffee",
       # External Check
       str_detect(description,"Member Deposit") & !is.na(moneyIn) ~ "External Check",
       # Transfers
       str_detect(description,"Internet Transfer DEBIT FROM SV") & !is.na(moneyIn) ~ paste0(account,"-Savings"),
-      # Item return
-      str_detect(description,"Point of Sale Credit") & str_detect(description,"MADEWELL") & !is.na(moneyIn) ~ "Madewell",
       # Apple card cash back
       str_detect(description,"VISA Money Transfer") & str_detect(description,"APPLE CASH") & !is.na(moneyIn) ~ "Apple",
       # Dividend earned from SECU
